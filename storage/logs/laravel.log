@@ -905,6 +905,7 @@
 #52 C:\\laragon\\www\\perpustakaan\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('C:\\\\laragon\\\\www\\\\...')
 #53 {main}
 "} 
+<<<<<<< HEAD
 [2026-06-11 06:40:20] local.ERROR: Command "db:seeder" is not defined.
 
 Did you mean one of these?
@@ -1777,3 +1778,5 @@ Did you mean one of these?
 #52 C:\\xampp\\htdocs\\perpustakaan\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('C:\\\\xampp\\\\htdocs...')
 #53 {main}
 "} 
+=======
+>>>>>>> 30f00cc9cbd099933d638f1cf0ee261d338abf0e
