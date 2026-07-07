@@ -17,8 +17,7 @@ class CatalogController extends Controller
             $term = $request->q;
             $query->where(function ($q) use ($term) {
                 $q->where('title', 'like', "%{$term}%")
-                    ->orWhere('author', 'like', "%{$term}%")
-                    ->orWhere('isbn', 'like', "%{$term}%");
+                    ->orWhere('author', 'like', "%{$term}%");
             });
         }
 
@@ -30,8 +29,6 @@ class CatalogController extends Controller
         // Availability filter
         if ($request->availability === 'available') {
             $query->where('available_copies', '>', 0);
-        } elseif ($request->availability === 'ebook') {
-            $query->where('is_ebook', true);
         }
 
         // Sort
@@ -44,11 +41,11 @@ class CatalogController extends Controller
             default   => $query->latest(),
         };
 
-        $books = $query->paginate(12)->withQueryString();
-        $categories = Book::getCategories();
-        $totalBooks = Book::count();
+        $books              = $query->paginate(12)->withQueryString();
+        $existingCategories = Book::getExistingCategories();
+        $totalBooks         = Book::count();
 
-        return view('catalog.index', compact('books', 'categories', 'totalBooks'));
+        return view('catalog.index', compact('books', 'existingCategories', 'totalBooks'));
     }
 
     public function show(Book $book)

@@ -44,18 +44,6 @@
                     </label>
                     @endforeach
 
-                    <hr class="my-4 border-gray-200">
-
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ketersediaan</p>
-                    @foreach(['available' => 'Tersedia Sekarang', 'ebook' => 'Hanya E-Book', '' => 'Semua Item'] as $val => $label)
-                    <label class="flex items-center gap-2 mb-2 cursor-pointer">
-                        <input type="radio" name="availability" value="{{ $val }}"
-                            {{ request('availability', '') === $val ? 'checked' : '' }}
-                            onchange="document.getElementById('filter-form').submit()"
-                            class="accent-[#1B2A5E]">
-                        <span class="text-sm text-gray-700">{{ $label }}</span>
-                    </label>
-                    @endforeach
                 </form>
             </div>
         </aside>
