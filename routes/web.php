@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\LoanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingController;
 
 // ── PUBLIC ROUTES ──────────────────────────────────────────────────────────
 Route::get('/', [CatalogController::class, 'index'])->name('catalog.index');
@@ -45,6 +47,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Members
     Route::get('/members', [AdminController::class, 'members'])->name('members');
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
+    Route::patch('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::patch('/settings/account', [SettingController::class, 'updateAccount'])->name('settings.account');
 
     // Loans
     Route::get('/loans', [AdminController::class, 'loans'])->name('loans');
