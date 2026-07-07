@@ -13,25 +13,18 @@ class Book extends Model
     protected $fillable = [
         'title',
         'author',
-        'isbn',
         'publisher',
         'published_year',
         'category',
-        'synopsis',
-        'total_copies',
+        'deskripsi',
+        'stok',
         'available_copies',
-        'shelf_location',
-        'shelf_section',
-        'pages',
-        'language',
         'cover_image',
-        'is_ebook',
         'rating',
         'rating_count',
     ];
 
     protected $casts = [
-        'is_ebook' => 'boolean',
         'rating' => 'float',
     ];
 
@@ -57,7 +50,6 @@ class Book extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        if ($this->is_ebook) return 'E-BOOK';
         if ($this->available_copies <= 0) return 'BORROWED';
         return 'AVAILABLE';
     }
@@ -80,24 +72,23 @@ class Book extends Model
         if ($term) {
             return $query->where(function ($q) use ($term) {
                 $q->where('title', 'like', "%{$term}%")
-                    ->orWhere('author', 'like', "%{$term}%")
-                    ->orWhere('isbn', 'like', "%{$term}%");
+                    ->orWhere('author', 'like', "%{$term}%");
             });
         }
         return $query;
     }
 
-    public static function getCategories(): array
+    /**
+     * Ambil daftar kategori unik dari database (bukan hardcode).
+     */
+    public static function getExistingCategories(): array
     {
-        return [
-            'Science Fiction',
-            'Computer Science',
-            'Philosophy',
-            'Literature',
-            'History',
-            'Architecture',
-            'Non-Fiction',
-            'Other'
-        ];
+        return self::select('category')
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category')
+            ->toArray();
     }
 }

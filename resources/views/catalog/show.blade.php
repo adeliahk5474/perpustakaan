@@ -30,7 +30,7 @@
                     {{ $book->available_copies > 0 ? 'TERSEDIA SEKARANG' : 'TIDAK TERSEDIA' }}
                 </span>
                 @if($book->available_copies > 0)
-                <span class="text-xs text-gray-500 ml-auto">{{ $book->available_copies }} salinan tersisa</span>
+                <span class="text-xs text-gray-500 ml-auto">{{ $book->available_copies }} tersisa</span>
                 @endif
             </div>
         </div>
@@ -39,69 +39,48 @@
         <div class="md:col-span-2">
             <div class="flex gap-2 mb-3">
                 <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1 rounded-full uppercase tracking-wide">{{ $book->category }}</span>
-                @if($book->is_ebook)
-                <span class="text-xs font-semibold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">E-BOOK</span>
-                @endif
             </div>
 
             <h1 class="text-3xl font-bold text-gray-900 mb-1">{{ $book->title }}</h1>
             <p class="text-gray-500 mb-4">Oleh {{ $book->author }}</p>
 
-            <div class="flex items-center gap-6 text-sm text-gray-500 mb-6 pb-4 border-b border-gray-200">
-                @if($book->rating > 0)
-                <span class="flex items-center gap-1">
-                    <span class="text-yellow-400">★</span>
-                    <strong class="text-gray-800">{{ number_format($book->rating, 1) }}</strong>
-                    ({{ number_format($book->rating_count) }} ulasan)
-                </span>
-                @endif
-                @if($book->pages)
-                <span>📖 {{ number_format($book->pages) }} Halaman</span>
-                @endif
-                <span>🌐 {{ $book->language }}</span>
+            @if($book->rating > 0)
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-4 pb-4 border-b border-gray-200">
+                <span class="text-yellow-400">★</span>
+                <strong class="text-gray-800">{{ number_format($book->rating, 1) }}</strong>
+                <span>({{ number_format($book->rating_count) }} ulasan)</span>
             </div>
+            @else
+            <div class="mb-4 pb-4 border-b border-gray-200"></div>
+            @endif
 
-            @if($book->synopsis)
+            {{-- Deskripsi --}}
+            @if($book->deskripsi)
             <div class="mb-6">
-                <h2 class="font-bold text-gray-900 mb-2 text-lg">Sinopsis</h2>
-                <p class="text-gray-600 leading-relaxed text-sm">{{ $book->synopsis }}</p>
+                <h2 class="font-bold text-gray-900 mb-2 text-lg">Deskripsi</h2>
+                <p class="text-gray-600 leading-relaxed text-sm">{{ $book->deskripsi }}</p>
             </div>
             @endif
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                {{-- Specifications --}}
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1">ℹ️ Spesifikasi</p>
-                    @if($book->isbn)
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">ISBN-13</span>
-                        <span class="font-medium">{{ $book->isbn }}</span>
-                    </div>
-                    @endif
-                    @if($book->published_year)
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">Terbit</span>
-                        <span class="font-medium">{{ $book->published_year }}</span>
-                    </div>
-                    @endif
-                    @if($book->publisher)
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Penerbit</span>
-                        <span class="font-medium">{{ $book->publisher }}</span>
-                    </div>
-                    @endif
-                </div>
-
-                {{-- Shelf Location --}}
-                @if($book->shelf_location)
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <p class="text-xs font-semibold text-blue-500 uppercase tracking-wide mb-3 flex items-center gap-1">📍 Lokasi Rak</p>
-                    <p class="font-bold text-gray-800 text-lg">{{ $book->shelf_location }}</p>
-                    @if($book->shelf_section)
-                    <p class="text-sm text-gray-500">{{ $book->shelf_section }}</p>
-                    @endif
+            {{-- Spesifikasi --}}
+            <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">ℹ️ Spesifikasi</p>
+                @if($book->published_year)
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-500">Tahun Terbit</span>
+                    <span class="font-medium">{{ $book->published_year }}</span>
                 </div>
                 @endif
+                @if($book->publisher)
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-500">Penerbit</span>
+                    <span class="font-medium">{{ $book->publisher }}</span>
+                </div>
+                @endif
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Stok Tersedia</span>
+                    <span class="font-medium {{ $book->available_copies > 0 ? 'text-green-600' : 'text-red-500' }}">{{ $book->available_copies }}</span>
+                </div>
             </div>
 
             {{-- CTA --}}

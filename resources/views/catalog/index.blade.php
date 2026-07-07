@@ -34,7 +34,7 @@
                     @endif
 
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kategori</p>
-                    @foreach($categories as $cat)
+                    @foreach($existingCategories as $cat)
                     <label class="flex items-center gap-2 mb-2 cursor-pointer">
                         <input type="checkbox" name="category" value="{{ $cat }}"
                             {{ request('category') === $cat ? 'checked' : '' }}
@@ -105,11 +105,6 @@
                             <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">DIPINJAM</span>
                             @endif
                         </div>
-                        @if($book->is_ebook)
-                        <div class="absolute top-2 right-2">
-                            <span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">E-BOOK</span>
-                        </div>
-                        @endif
                     </a>
                     <div class="p-3">
                         <a href="{{ route('books.show', $book) }}" class="block">
@@ -119,8 +114,7 @@
                             <p class="text-xs text-yellow-500 mt-1">★ {{ number_format($book->rating, 1) }}</p>
                             @endif
                         </a>
-                        <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                            <span class="text-[10px] text-gray-400">{{ $book->isbn }}</span>
+                        <div class="flex items-center justify-end mt-2 pt-2 border-t border-gray-100">
                             <a href="{{ route('books.show', $book) }}" class="text-xs text-[#1B2A5E] font-semibold hover:underline">DETAIL ›</a>
                         </div>
                     </div>

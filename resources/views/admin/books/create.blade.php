@@ -20,80 +20,72 @@
         @csrf
 
         <div class="grid grid-cols-2 gap-5">
+
+            {{-- Judul --}}
             <div class="col-span-2">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Judul Buku *</label>
                 <input type="text" name="title" value="{{ old('title') }}" required
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
             </div>
+
+            {{-- Penulis --}}
             <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Penulis *</label>
                 <input type="text" name="author" value="{{ old('author') }}" required
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">ISBN</label>
-                <input type="text" name="isbn" value="{{ old('isbn') }}"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-            </div>
+
+            {{-- Penerbit --}}
             <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Penerbit</label>
                 <input type="text" name="publisher" value="{{ old('publisher') }}"
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
             </div>
+
+            {{-- Tahun Terbit --}}
             <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Tahun Terbit</label>
                 <input type="number" name="published_year" value="{{ old('published_year') }}" min="1000" max="{{ date('Y') + 1 }}"
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
             </div>
+
+            {{-- Kategori (input manual) --}}
             <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Kategori *</label>
-                <select name="category" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-                    <option value="">Pilih kategori...</option>
-                    @foreach($categories as $cat)
-                    <option value="{{ $cat }}" {{ old('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                    @endforeach
-                </select>
+                <input type="text" name="category" value="{{ old('category') }}" required
+                    placeholder="Contoh: Novel, Sains, Sejarah..."
+                    list="category-suggestions"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
+                <datalist id="category-suggestions">
+                    @foreach($existingCategories as $cat)
+                    <option value="{{ $cat }}">
+                        @endforeach
+                </datalist>
+                <p class="text-xs text-gray-400 mt-1">Ketik bebas atau pilih dari kategori yang sudah ada.</p>
             </div>
+
+            {{-- Deskripsi (bukan sinopsis) --}}
             <div class="col-span-2">
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Sinopsis</label>
-                <textarea name="synopsis" rows="4"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30 resize-none">{{ old('synopsis') }}</textarea>
+                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Deskripsi</label>
+                <textarea name="deskripsi" rows="4"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30 resize-none"
+                    placeholder="Tulis deskripsi singkat buku ini...">{{ old('deskripsi') }}</textarea>
             </div>
+
+            {{-- Stok --}}
             <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Total Salinan *</label>
-                <input type="number" name="total_copies" value="{{ old('total_copies', 1) }}" min="1" required
+                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Stok Buku *</label>
+                <input type="number" name="stok" value="{{ old('stok', 1) }}" min="1" required
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Jumlah Halaman</label>
-                <input type="number" name="pages" value="{{ old('pages') }}" min="1"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Lokasi Rak</label>
-                <input type="text" name="shelf_location" value="{{ old('shelf_location') }}" placeholder="Bagian A, Baris 12"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Seksi</label>
-                <input type="text" name="shelf_section" value="{{ old('shelf_section') }}" placeholder="Sayap Ilmu Komputer"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Bahasa</label>
-                <input type="text" name="language" value="{{ old('language', 'Indonesian') }}"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5E]/30">
-            </div>
-            <div class="flex items-center gap-3">
-                <input type="checkbox" name="is_ebook" value="1" id="is_ebook" {{ old('is_ebook') ? 'checked' : '' }}
-                    class="w-4 h-4 accent-[#1B2A5E]">
-                <label for="is_ebook" class="text-sm text-gray-700">Ini adalah E-Book</label>
-            </div>
+
+            {{-- Gambar Sampul --}}
             <div class="col-span-2">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Gambar Sampul</label>
                 <input type="file" name="cover_image" accept="image/*"
                     class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#1B2A5E] file:text-white file:text-xs file:cursor-pointer">
             </div>
+
         </div>
 
         <div class="flex gap-3 pt-4 border-t border-gray-100">
