@@ -20,13 +20,13 @@
     </div>
     <select name="category" class="border border-gray-300 rounded-xl text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1B2A5E]">
         <option value="">Semua Kategori</option>
-        @foreach($categories as $cat)
-            <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+        @foreach($existingCategories as $cat)
+        <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
         @endforeach
     </select>
     <button type="submit" class="bg-[#1B2A5E] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-[#0F1D45]">Filter</button>
     @if(request('q') || request('category'))
-        <a href="{{ route('admin.books') }}" class="border border-gray-300 text-gray-600 px-4 py-2 rounded-xl text-sm hover:bg-gray-50">Reset</a>
+    <a href="{{ route('admin.books') }}" class="border border-gray-300 text-gray-600 px-4 py-2 rounded-xl text-sm hover:bg-gray-50">Reset</a>
     @endif
 </form>
 
@@ -50,9 +50,9 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-12 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
                             @if($book->cover_image)
-                                <img src="{{ asset('storage/' . $book->cover_image) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $book->cover_image) }}" class="w-full h-full object-cover">
                             @else
-                                <span>📖</span>
+                            <span>📖</span>
                             @endif
                         </div>
                         <div>
