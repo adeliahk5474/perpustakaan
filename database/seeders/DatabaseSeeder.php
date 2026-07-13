@@ -22,22 +22,5 @@ class DatabaseSeeder extends Seeder
             'password'  => Hash::make('admin123'),
             'role'      => 'admin',
         ]);
-
-        // ── Members ───────────────────────────────────────────
-        $member1 = User::create([
-            'name'      => 'M. Aryan',
-            'email'     => 'aryan@student.edu',
-            'member_id' => 'STU-2024001',
-            'password'  => Hash::make('member1'),
-            'role'      => 'member',
-        ]);
-
-        $member2 = User::create([
-            'name'      => 'Jane Doe',
-            'email'     => 'jane@student.edu',
-            'member_id' => 'STU-2024002',
-            'password'  => Hash::make('member2'),
-            'role'      => 'member',
-        ]);
     }
 }
