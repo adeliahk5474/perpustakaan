@@ -1,4 +1,3 @@
-{{-- resources/views/admin/books/index.blade.php --}}
 @extends('layouts.admin')
 @section('title', 'Inventaris')
 
@@ -11,11 +10,10 @@
     </a>
 </div>
 
-{{-- FILTERS --}}
 <form action="{{ route('admin.books') }}" method="GET" class="flex gap-3 mb-5">
     <div class="relative flex-1 max-w-sm">
         <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
-        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul, penulis, ISBN..."
+        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul atau penulis..."
             class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-[#1B2A5E]">
     </div>
     <select name="category" class="border border-gray-300 rounded-xl text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1B2A5E]">
@@ -36,8 +34,8 @@
             <tr class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
                 <th class="text-left px-6 py-3 font-medium">Buku</th>
                 <th class="text-left px-6 py-3 font-medium">Kategori</th>
-                <th class="text-left px-6 py-3 font-medium">ISBN</th>
-                <th class="text-center px-6 py-3 font-medium">Salinan</th>
+                <th class="text-left px-6 py-3 font-medium">Penerbit</th>
+                <th class="text-center px-6 py-3 font-medium">Stok</th>
                 <th class="text-center px-6 py-3 font-medium">Tersedia</th>
                 <th class="text-center px-6 py-3 font-medium">Status</th>
                 <th class="px-6 py-3"></th>
@@ -61,9 +59,9 @@
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-gray-600">{{ $book->category }}</td>
-                <td class="px-6 py-4 text-gray-400 font-mono text-xs">{{ $book->isbn ?? '-' }}</td>
-                <td class="px-6 py-4 text-center font-medium">{{ $book->total_copies }}</td>
+                <td class="px-6 py-4 text-gray-600">{{ $book->category ?? '-' }}</td>
+                <td class="px-6 py-4 text-gray-400 text-xs">{{ $book->publisher ?? '-' }}</td>
+                <td class="px-6 py-4 text-center font-medium">{{ $book->stok }}</td>
                 <td class="px-6 py-4 text-center">
                     <span class="font-bold {{ $book->available_copies > 0 ? 'text-green-600' : 'text-red-500' }}">
                         {{ $book->available_copies }}
