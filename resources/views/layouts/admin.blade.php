@@ -77,10 +77,6 @@
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.reports*') ? 'bg-[#1B2A5E] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                 📊 Laporan
             </a>
-            <a href="{{ route('admin.settings') }}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.settings*') ? 'bg-[#1B2A5E] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
-                ⚙️ Pengaturan
-            </a>
         </nav>
     </aside>
 
