@@ -35,7 +35,7 @@
         <p class="text-xs text-gray-400 mt-1">Pada periode terpilih</p>
     </div>
     <div class="bg-white border border-gray-200 rounded-2xl p-5">
-        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-xl mb-3">✅</div>
+        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-xl mb-3">🔔</div>
         <p class="text-xs text-gray-400 uppercase tracking-wide">Berhasil Dikembalikan</p>
         <p class="text-3xl font-bold text-green-700">{{ number_format($totalReturned ?? 0) }}</p>
         <p class="text-xs text-gray-400 mt-1">{{ $returnRate ?? 0 }}% tingkat pengembalian</p>
@@ -65,8 +65,8 @@
             </div>
         </div>
         @php
-            $trendData = $trends ?? [];
-            $maxVal = collect($trendData)->flatMap(fn($t) => [$t['borrowed'] ?? 0, $t['returned'] ?? 0])->max() ?: 1;
+        $trendData = $trends ?? [];
+        $maxVal = collect($trendData)->flatMap(fn($t) => [$t['borrowed'] ?? 0, $t['returned'] ?? 0])->max() ?: 1;
         @endphp
         <div class="flex items-end gap-3 h-48">
             @forelse($trendData as $t)
@@ -175,14 +175,14 @@
                     <td class="px-6 py-3 text-center">
                         @php
                         $statusClasses = [
-                            'returned' => 'bg-green-100 text-green-700',
-                            'overdue' => 'bg-red-100 text-red-600',
-                            'borrowed' => 'bg-blue-100 text-blue-700',
+                        'returned' => 'bg-green-100 text-green-700',
+                        'overdue' => 'bg-red-100 text-red-600',
+                        'borrowed' => 'bg-blue-100 text-blue-700',
                         ];
                         $statusLabels = [
-                            'returned' => 'Dikembalikan',
-                            'overdue' => 'Terlambat',
-                            'borrowed' => 'Dipinjam',
+                        'returned' => 'Dikembalikan',
+                        'overdue' => 'Terlambat',
+                        'borrowed' => 'Dipinjam',
                         ];
                         @endphp
                         <span class="{{ $statusClasses[$trx->status] ?? 'bg-gray-100 text-gray-600' }} text-xs font-bold px-2 py-0.5 rounded-full">

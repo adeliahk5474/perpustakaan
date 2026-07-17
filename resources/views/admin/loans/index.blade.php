@@ -16,9 +16,9 @@
     </div>
     <select name="status" class="border border-gray-300 rounded-xl text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1B2A5E]">
         <option value="">Semua Status</option>
-        <option value="pending"  {{ request('status') === 'pending'  ? 'selected' : '' }}>⏳ Menunggu Konfirmasi</option>
+        <option value="pending" {{ request('status') === 'pending'  ? 'selected' : '' }}>⏳ Menunggu Konfirmasi</option>
         <option value="borrowed" {{ request('status') === 'borrowed' ? 'selected' : '' }}>📖 Sedang Dipinjam</option>
-        <option value="overdue"  {{ request('status') === 'overdue'  ? 'selected' : '' }}>⚠️ Terlambat</option>
+        <option value="overdue" {{ request('status') === 'overdue'  ? 'selected' : '' }}>⚠️ Terlambat</option>
         <option value="returned" {{ request('status') === 'returned' ? 'selected' : '' }}>✅ Dikembalikan</option>
         <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>❌ Ditolak</option>
     </select>
@@ -45,16 +45,16 @@
             @forelse($loans as $loan)
             @php
             $rowBg = match($loan->status) {
-                'pending'  => 'bg-yellow-50/60',
-                'overdue'  => 'bg-red-50/50',
-                default    => '',
+            'pending' => 'bg-yellow-50/60',
+            'overdue' => 'bg-red-50/50',
+            default => '',
             };
             $cls = [
-                'pending'  => 'bg-yellow-100 text-yellow-700',
-                'borrowed' => 'bg-blue-100 text-blue-700',
-                'returned' => 'bg-green-100 text-green-700',
-                'overdue'  => 'bg-red-100 text-red-600',
-                'rejected' => 'bg-gray-100 text-gray-500',
+            'pending' => 'bg-yellow-100 text-yellow-700',
+            'borrowed' => 'bg-blue-100 text-blue-700',
+            'returned' => 'bg-green-100 text-green-700',
+            'overdue' => 'bg-red-100 text-red-600',
+            'rejected' => 'bg-gray-100 text-gray-500',
             ];
             @endphp
             <tr class="hover:bg-gray-50 {{ $rowBg }}">
@@ -103,37 +103,37 @@
                 <td class="px-5 py-4">
                     <div class="flex gap-2 justify-center flex-wrap">
                         @if($loan->status === 'pending')
-                            {{-- Admin konfirmasi → buku resmi dipinjam --}}
-                            <form action="{{ route('admin.loans.confirm-borrow', $loan) }}" method="POST">
-                                @csrf
-                                <button type="submit" onclick="return confirm('Konfirmasi peminjaman {{ $loan->book->title }} oleh {{ $loan->user->name }}?')"
-                                    class="text-xs bg-[#1B2A5E] text-white px-3 py-1.5 rounded-lg hover:bg-[#0F1D45] font-semibold whitespace-nowrap">
-                                    ✓ Konfirmasi Pinjam
-                                </button>
-                            </form>
-                            <form action="{{ route('admin.loans.reject-borrow', $loan) }}" method="POST">
-                                @csrf
-                                <button type="submit" onclick="return confirm('Tolak pengajuan ini?')"
-                                    class="text-xs border border-red-300 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-50 font-semibold whitespace-nowrap">
-                                    ✗ Tolak
-                                </button>
-                            </form>
+                        {{-- Admin konfirmasi → buku resmi dipinjam --}}
+                        <form action="{{ route('admin.loans.confirm-borrow', $loan) }}" method="POST">
+                            @csrf
+                            <button type="submit" onclick="return confirm('Konfirmasi peminjaman {{ $loan->book->title }} oleh {{ $loan->user->name }}?')"
+                                class="text-xs bg-[#1B2A5E] text-white px-3 py-1.5 rounded-lg hover:bg-[#0F1D45] font-semibold whitespace-nowrap">
+                                ✓ Konfirmasi Pinjam
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.loans.reject-borrow', $loan) }}" method="POST">
+                            @csrf
+                            <button type="submit" onclick="return confirm('Tolak pengajuan ini?')"
+                                class="text-xs border border-red-300 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-50 font-semibold whitespace-nowrap">
+                                ✗ Tolak
+                            </button>
+                        </form>
 
                         @elseif(in_array($loan->status, ['borrowed', 'overdue']))
-                            {{-- Admin konfirmasi pengembalian fisik --}}
-                            <form action="{{ route('admin.loans.confirm-return', $loan) }}" method="POST">
-                                @csrf
-                                <button type="submit" onclick="return confirm('Konfirmasi buku {{ $loan->book->title }} sudah dikembalikan secara fisik?')"
-                                    class="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 font-semibold whitespace-nowrap">
-                                    ↩ Konfirmasi Kembali
-                                </button>
-                            </form>
+                        {{-- Admin konfirmasi pengembalian fisik --}}
+                        <form action="{{ route('admin.loans.confirm-return', $loan) }}" method="POST">
+                            @csrf
+                            <button type="submit" onclick="return confirm('Konfirmasi buku {{ $loan->book->title }} sudah dikembalikan secara fisik?')"
+                                class="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 font-semibold whitespace-nowrap">
+                                Konfirmasi Kembali
+                            </button>
+                        </form>
 
                         @elseif($loan->status === 'returned')
-                            <span class="text-xs text-gray-400">{{ $loan->returned_date?->format('d M Y') }}</span>
+                        <span class="text-xs text-gray-400">{{ $loan->returned_date?->format('d M Y') }}</span>
 
                         @else
-                            <span class="text-xs text-gray-400">-</span>
+                        <span class="text-xs text-gray-400">-</span>
                         @endif
                     </div>
                 </td>
