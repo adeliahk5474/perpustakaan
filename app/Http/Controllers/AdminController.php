@@ -173,10 +173,10 @@ class AdminController extends Controller
 
         if ($request->filled('q')) {
             $q = $request->q;
-            $query->where(function($qb) use ($q) {
+            $query->where(function ($qb) use ($q) {
                 $qb->whereHas('user', fn($u) => $u->where('name', 'like', "%{$q}%"))
-                   ->orWhereHas('book', fn($b) => $b->where('title', 'like', "%{$q}%"))
-                   ->orWhere('record_id', 'like', "%{$q}%");
+                    ->orWhereHas('book', fn($b) => $b->where('title', 'like', "%{$q}%"))
+                    ->orWhere('record_id', 'like', "%{$q}%");
             });
         }
 
@@ -204,7 +204,7 @@ class AdminController extends Controller
         // Kurangi stok baru saat dikonfirmasi
         $loan->book->decrement('available_copies');
 
-        return back()->with('success', "Peminjaman "{$loan->book->title}" oleh {$loan->user->name} dikonfirmasi.");
+        return back()->with('success', "Peminjaman \"{$loan->book->title}\" oleh {$loan->user->name} dikonfirmasi.");
     }
 
     // Admin: tolak pengajuan
@@ -216,7 +216,7 @@ class AdminController extends Controller
 
         $loan->update(['status' => 'rejected']);
 
-        return back()->with('success', "Pengajuan "{$loan->book->title}" ditolak.");
+        return back()->with('success', "Pengajuan \"{$loan->book->title}\" ditolak.");
     }
 
     // Admin: konfirmasi pengembalian fisik → stok bertambah
@@ -233,6 +233,6 @@ class AdminController extends Controller
 
         $loan->book->increment('available_copies');
 
-        return back()->with('success', "Pengembalian "{$loan->book->title}" oleh {$loan->user->name} dikonfirmasi.");
+        return back()->with('success', "Pengembalian \"{$loan->book->title}\" oleh {$loan->user->name} dikonfirmasi.");
     }
 }
