@@ -1,4 +1,3 @@
-{{-- resources/views/member/dashboard.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Buku Saya')
 
@@ -13,7 +12,7 @@
         </div>
         <a href="{{ route('catalog.index') }}"
             class="bg-[#1B2A5E] text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-[#0F1D45] transition text-sm flex items-center gap-2">
-            + Pinjam Buku Baru
+            + Ajukan Pinjam Buku
         </a>
     </div>
 
@@ -22,7 +21,7 @@
         <div class="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4">
             <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl">📚</div>
             <div>
-                <p class="text-xs text-gray-500">Sedang Dipinjam</p>
+                <p class="text-xs text-gray-500">Sedang Diproses / Dipinjam</p>
                 <p class="text-3xl font-bold text-gray-900">{{ str_pad($currentlyBorrowed, 2, '0', STR_PAD_LEFT) }}</p>
                 <p class="text-xs text-gray-400">/ 05 Batas</p>
             </div>
@@ -39,15 +38,29 @@
             </div>
         </div>
         <div class="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl">📅</div>
+            <div class="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-2xl">📅</div>
             <div>
-                <p class="text-xs text-gray-500">Jatuh Tempo Minggu Ini</p>
+                <p class="text-xs text-gray-500">Jatuh Tempo 3 Hari Ini</p>
                 <p class="text-3xl font-bold text-gray-900">{{ str_pad($dueSoon, 2, '0', STR_PAD_LEFT) }}</p>
             </div>
         </div>
     </div>
 
-    {{-- ACTIVE LOANS --}}
+    {{-- ALERT INFO --}}
+    <div class="bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 mb-6 flex items-start gap-3">
+        <span class="text-blue-500 text-xl mt-0.5">ℹ️</span>
+        <div class="text-sm text-blue-800">
+            <p class="font-semibold mb-1">Cara meminjam buku:</p>
+            <ol class="list-decimal ml-4 space-y-1 text-blue-700">
+                <li>Pilih buku di katalog → klik <strong>Ajukan Pinjaman</strong></li>
+                <li>Datang ke perpustakaan → <strong>tulis data di kertas pinjam buku</strong></li>
+                <li>Admin akan konfirmasi, status berubah menjadi <strong>Sedang Dipinjam</strong></li>
+                <li>Untuk mengembalikan, <strong>serahkan buku langsung ke petugas perpustakaan</strong></li>
+            </ol>
+        </div>
+    </div>
+
+    {{-- PEMINJAMAN AKTIF --}}
     <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
         <h2 class="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">📋 Peminjaman Aktif</h2>
 
@@ -60,7 +73,10 @@
         @else
         <div class="space-y-3">
             @foreach($activeLoans as $loan)
-            <div class="flex items-center gap-4 p-4 rounded-xl border {{ $loan->status === 'overdue' ? 'border-red-200 bg-red-50' : 'border-gray-100' }}">
+            <div class="flex items-center gap-4 p-4 rounded-xl border
+                {{ $loan->status === 'overdue' ? 'border-red-200 bg-red-50' :
+                   ($loan->status === 'pending' ? 'border-yellow-200 bg-yellow-50' : 'border-gray-100') }}">
+
                 {{-- Cover --}}
                 <div class="w-14 h-16 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
                     @if($loan->book->cover_image)
@@ -72,55 +88,49 @@
 
                 {{-- Info --}}
                 <div class="flex-1 min-w-0">
-                    <a href="{{ route('books.show', $loan->book) }}" class="font-semibold text-[#1B2A5E] hover:underline text-sm">{{ $loan->book->title }}</a>
+                    <a href="{{ route('books.show', $loan->book) }}" class="font-semibold text-[#1B2A5E] hover:underline text-sm">
+                        {{ $loan->book->title }}
+                    </a>
                     <p class="text-xs text-gray-500">Oleh {{ $loan->book->author }}</p>
-                    <p class="text-xs text-gray-400">ISBN: {{ $loan->book->isbn }}</p>
+                    <p class="text-xs text-gray-400 mt-1">No. Pengajuan: {{ $loan->record_id }}</p>
                 </div>
 
-                {{-- Dates --}}
-                <div class="text-center hidden md:block">
-                    <p class="text-xs text-gray-400 uppercase tracking-wide">Tanggal Pinjam</p>
-                    <p class="text-sm font-medium">{{ $loan->borrowed_date->format('d M Y') }}</p>
-                </div>
-
-                <div class="text-center hidden md:block">
-                    <p class="text-xs text-gray-400 uppercase tracking-wide">Tenggat Pengembalian</p>
-                    <p class="text-sm font-medium {{ $loan->status === 'overdue' ? 'text-red-600' : 'text-blue-600' }}">
-                        {{ $loan->due_date->format('d M Y') }}
-                    </p>
-                    @if($loan->status === 'overdue')
-                    <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">
-                        TERLAMBAT {{ $loan->days_late }} HARI
-                    </span>
+                {{-- Tanggal & status --}}
+                <div class="text-center hidden md:block min-w-[130px]">
+                    @if($loan->status === 'pending')
+                        <p class="text-xs text-yellow-600 font-semibold uppercase tracking-wide">Menunggu Konfirmasi</p>
+                        <p class="text-xs text-gray-400 mt-1">Harap datang ke perpustakaan & isi kertas pinjam</p>
+                    @else
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">Tenggat Pengembalian</p>
+                        <p class="text-sm font-semibold {{ $loan->status === 'overdue' ? 'text-red-600' : 'text-blue-600' }}">
+                            {{ $loan->due_date?->format('d M Y') ?? '-' }}
+                        </p>
+                        @if($loan->status === 'overdue')
+                        <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">
+                            TERLAMBAT {{ $loan->days_late }} HARI
+                        </span>
+                        @endif
                     @endif
                 </div>
 
-                {{-- Actions --}}
-                <div class="flex gap-2 flex-shrink-0">
-                    @if($loan->renewal_count < 2 && $loan->status !== 'overdue')
-                        <form action="{{ route('loans.renew', $loan) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold hover:border-[#1B2A5E] hover:text-[#1B2A5E] transition">
-                                PERPANJANG
-                            </button>
-                        </form>
-                        @endif
-                        <form action="{{ route('loans.return', $loan) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="px-3 py-2 bg-[#1B2A5E] text-white rounded-lg text-xs font-semibold hover:bg-[#0F1D45] transition">
-                                KEMBALIKAN BUKU
-                            </button>
-                        </form>
+                {{-- Badge status --}}
+                <div class="flex-shrink-0">
+                    <span class="text-xs font-bold px-3 py-1.5 rounded-full {{ $loan->status_color }}">
+                        {{ strtoupper($loan->status_label) }}
+                    </span>
                 </div>
+
+                {{-- Tidak ada tombol kembalikan — harus ke perpustakaan --}}
             </div>
             @endforeach
         </div>
         @endif
     </div>
 
-    {{-- BOTTOM SECTION --}}
+    {{-- BAWAH: riwayat + tersimpan --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{-- RECENT HISTORY --}}
+
+        {{-- RIWAYAT --}}
         <div class="bg-white border border-gray-200 rounded-2xl p-6">
             <h2 class="font-bold text-gray-900 mb-4 flex items-center gap-2">🕐 Riwayat Terbaru</h2>
             @if($recentHistory->isEmpty())
@@ -130,9 +140,8 @@
                 <thead>
                     <tr class="text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100">
                         <th class="text-left pb-2 font-medium">Judul Buku</th>
-                        <th class="text-left pb-2 font-medium">Dikembalikan</th>
                         <th class="text-left pb-2 font-medium">Status</th>
-                        <th class="pb-2"></th>
+                        <th class="text-left pb-2 font-medium">Tanggal</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -143,20 +152,18 @@
                                 {{ $loan->book->title }}
                             </a>
                         </td>
-                        <td class="py-3 text-gray-500 whitespace-nowrap">{{ $loan->returned_date?->format('d M Y') }}</td>
                         <td class="py-3">
-                            @php
-                            $wasLate = $loan->returned_date && $loan->returned_date->gt($loan->due_date);
-                            @endphp
-                            <span class="{{ $wasLate ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700' }} text-xs font-bold px-2 py-0.5 rounded-full">
-                                {{ $wasLate ? 'TERLAMBAT' : 'TEPAT WAKTU' }}
-                            </span>
+                            @if($loan->status === 'returned')
+                                @php $wasLate = $loan->returned_date && $loan->due_date && $loan->returned_date->gt($loan->due_date); @endphp
+                                <span class="{{ $wasLate ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700' }} text-xs font-bold px-2 py-0.5 rounded-full">
+                                    {{ $wasLate ? 'TERLAMBAT' : 'TEPAT WAKTU' }}
+                                </span>
+                            @else
+                                <span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-0.5 rounded-full">DITOLAK</span>
+                            @endif
                         </td>
-                        <td class="py-3">
-                            <form action="{{ route('loans.borrow', $loan->book) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="text-xs text-[#1B2A5E] font-semibold hover:underline">PINJAM LAGI</button>
-                            </form>
+                        <td class="py-3 text-gray-400 text-xs whitespace-nowrap">
+                            {{ ($loan->returned_date ?? $loan->updated_at)?->format('d M Y') }}
                         </td>
                     </tr>
                     @endforeach
@@ -168,7 +175,7 @@
             @endif
         </div>
 
-        {{-- SAVED FOR LATER --}}
+        {{-- TERSIMPAN --}}
         <div class="bg-white border border-gray-200 rounded-2xl p-6">
             <h2 class="font-bold text-gray-900 mb-4 flex items-center gap-2">★ Disimpan untuk Nanti</h2>
             @if($savedBooks->isEmpty())
@@ -190,7 +197,7 @@
                         </a>
                         <p class="text-xs text-gray-500">{{ $wish->book->author }}</p>
                         <span class="{{ $wish->book->available_copies > 0 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }} text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block">
-                            {{ $wish->book->available_copies > 0 ? 'TERSEDIA' : 'DAFTAR TUNGGU' }}
+                            {{ $wish->book->available_copies > 0 ? 'TERSEDIA' : 'TIDAK TERSEDIA' }}
                         </span>
                     </div>
                 </div>
@@ -198,7 +205,7 @@
             </div>
             @endif
             <a href="{{ route('catalog.index') }}" class="block text-center text-sm text-[#1B2A5E] font-semibold hover:underline border border-[#1B2A5E] rounded-xl py-2">
-                JELAJAHI SEMUA REKOMENDASI
+                JELAJAHI SEMUA BUKU
             </a>
         </div>
     </div>

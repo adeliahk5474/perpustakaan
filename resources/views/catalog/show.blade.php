@@ -87,15 +87,15 @@
             <div class="flex gap-3">
                 @auth
                 @if($isAlreadyBorrowed)
-                <div class="flex-1 bg-gray-100 text-gray-500 py-3.5 rounded-xl font-semibold text-center text-sm">
-                    ✓ Sedang Dipinjam
+                <div class="flex-1 bg-yellow-50 border border-yellow-200 text-yellow-700 py-3.5 rounded-xl font-semibold text-center text-sm">
+                    ⏳ Pengajuan Sudah Dikirim
                 </div>
                 @elseif($book->available_copies > 0)
                 <form action="{{ route('loans.borrow', $book) }}" method="POST" class="flex-1">
                     @csrf
                     <button type="submit"
                         class="w-full bg-[#1B2A5E] text-white py-3.5 rounded-xl font-semibold hover:bg-[#0F1D45] transition flex items-center justify-center gap-2">
-                        📖 Pinjam Buku Ini
+                        📋 Ajukan Pinjaman
                     </button>
                 </form>
                 @else

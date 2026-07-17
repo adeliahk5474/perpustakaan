@@ -1,5 +1,4 @@
 <?php
-// database/migrations/2024_01_01_000003_create_loans_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,15 +9,19 @@ return new class extends Migration {
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->string('record_id')->unique(); // e.g. TX-9021
+            $table->string('record_id')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('book_id')->constrained()->cascadeOnDelete();
-            $table->date('borrowed_date');
-            $table->date('due_date');
+            $table->date('borrowed_date')->nullable();   // diisi saat admin konfirmasi
+            $table->date('due_date')->nullable();        // diisi saat admin konfirmasi
             $table->date('returned_date')->nullable();
-            $table->enum('status', ['borrowed', 'returned', 'overdue'])->default('borrowed');
-            $table->boolean('is_renewed')->default(false);
-            $table->integer('renewal_count')->default(0);
+            $table->enum('status', [
+                'pending',    // member ajukan, belum dikonfirmasi admin
+                'borrowed',   // admin konfirmasi → buku aktif dipinjam
+                'returned',   // admin konfirmasi pengembalian
+                'overdue',    // melewati due_date
+                'rejected',   // admin tolak pengajuan
+            ])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

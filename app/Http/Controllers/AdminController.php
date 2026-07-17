@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\LoanController;
 
 class AdminController extends Controller
 {
@@ -172,24 +173,66 @@ class AdminController extends Controller
 
         if ($request->filled('q')) {
             $q = $request->q;
-            $query->whereHas('user', fn($u) => $u->where('name', 'like', "%{$q}%"))
-                ->orWhereHas('book', fn($b) => $b->where('title', 'like', "%{$q}%"))
-                ->orWhere('record_id', 'like', "%{$q}%");
+            $query->where(function($qb) use ($q) {
+                $qb->whereHas('user', fn($u) => $u->where('name', 'like', "%{$q}%"))
+                   ->orWhereHas('book', fn($b) => $b->where('title', 'like', "%{$q}%"))
+                   ->orWhere('record_id', 'like', "%{$q}%");
+            });
         }
 
         $loans = $query->paginate(15)->withQueryString();
         return view('admin.loans.index', compact('loans'));
     }
 
-    public function confirmReturn(Loan $loan)
+    // Admin: konfirmasi pengajuan → buku resmi dipinjam, stok berkurang
+    public function confirmBorrow(Loan $loan)
     {
-        if ($loan->status === 'returned') {
-            return back()->with('error', 'Buku ini sudah dikembalikan.');
+        if ($loan->status !== 'pending') {
+            return back()->with('error', 'Pengajuan ini sudah diproses.');
         }
 
-        $loan->update(['status' => 'returned', 'returned_date' => Carbon::today()]);
+        if ($loan->book->available_copies <= 0) {
+            return back()->with('error', 'Stok buku sudah habis.');
+        }
+
+        $loan->update([
+            'status'        => 'borrowed',
+            'borrowed_date' => Carbon::today(),
+            'due_date'      => Carbon::today()->addDays(LoanController::LOAN_DAYS),
+        ]);
+
+        // Kurangi stok baru saat dikonfirmasi
+        $loan->book->decrement('available_copies');
+
+        return back()->with('success', "Peminjaman "{$loan->book->title}" oleh {$loan->user->name} dikonfirmasi.");
+    }
+
+    // Admin: tolak pengajuan
+    public function rejectBorrow(Loan $loan)
+    {
+        if ($loan->status !== 'pending') {
+            return back()->with('error', 'Pengajuan ini sudah diproses.');
+        }
+
+        $loan->update(['status' => 'rejected']);
+
+        return back()->with('success', "Pengajuan "{$loan->book->title}" ditolak.");
+    }
+
+    // Admin: konfirmasi pengembalian fisik → stok bertambah
+    public function confirmReturn(Loan $loan)
+    {
+        if (!in_array($loan->status, ['borrowed', 'overdue'])) {
+            return back()->with('error', 'Buku ini tidak sedang dipinjam.');
+        }
+
+        $loan->update([
+            'status'        => 'returned',
+            'returned_date' => Carbon::today(),
+        ]);
+
         $loan->book->increment('available_copies');
 
-        return back()->with('success', 'Pengembalian buku dikonfirmasi.');
+        return back()->with('success', "Pengembalian "{$loan->book->title}" oleh {$loan->user->name} dikonfirmasi.");
     }
 }
